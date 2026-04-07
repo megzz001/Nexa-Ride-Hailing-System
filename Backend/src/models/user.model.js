@@ -1,4 +1,7 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
     fullname: {
@@ -21,7 +24,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false // Exclude password from query results by default
     },
     socketId: {
         type: String,
@@ -38,5 +42,20 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const userModel = mongoose.model('User', userSchema);
+userSchema.methods.generateAuthToken = function() {
+    const token = jwt.sign(
+        { _id: this._id, email: this.email, role: this.role },
+        process.env.JWT_SECRET);
+    return token;
+};
+
+userSchema.pre.methodsComparePassword = async function(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.statics.hashPassword = async function(password) {
+    return await bcrypt.hash(password, 12);
+};
+
+const userModel = mongoose.model('user', userSchema);
 module.exports = userModel;
