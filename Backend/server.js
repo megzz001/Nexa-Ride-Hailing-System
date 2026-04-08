@@ -21,7 +21,6 @@ server.on('error', (error) => {
         console.error(`Port ${PORT} is already in use. Stop the existing process or change PORT in .env.`);
         process.exit(1);
     }
-
     console.error('Server failed to start:', error);
     process.exit(1);
 });
