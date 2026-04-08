@@ -65,3 +65,106 @@ The project is designed to analyze how monolithic systems behave under **high tr
 ```bash
 git clone https://github.com/your-username/nexa.git
 cd nexa
+```
+
+### 2. Install backend dependencies
+```bash
+cd Backend
+npm install
+```
+
+### 3. Run the backend server
+```bash
+npm run dev
+```
+
+By default, the backend API is available at:
+
+`http://localhost:3000`
+
+---
+
+## API Docs
+
+### Register User
+
+- **Endpoint:** `POST /api/users/register`
+- **Description:** Creates a new user account (rider, driver, or admin), hashes the password, and returns a JWT token.
+
+#### Required Request Data
+
+Content-Type: `application/json`
+
+```json
+{
+	"fullname": {
+		"firstName": "John",
+		"lastName": "Doe"
+	},
+	"email": "john.doe@example.com",
+	"password": "secret123",
+	"role": "rider"
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstName` (string, required, minimum 3 characters)
+- `fullname.lastName` (string, optional, minimum 2 characters if provided)
+- `email` (string, required, valid email)
+- `password` (string, required, minimum 6 characters)
+- `role` (string, required, allowed: `rider`, `driver`, `admin`)
+
+#### Status Codes
+
+- `201 Created`
+	- User registration succeeded.
+	- Example response:
+
+```json
+{
+	"message": "User registered successfully",
+	"token": "<jwt_token>",
+	"user": {
+		"_id": "...",
+		"fullname": {
+			"firstName": "John",
+			"lastName": "Doe"
+		},
+		"email": "john.doe@example.com",
+		"role": "rider"
+	}
+}
+```
+
+- `400 Bad Request`
+	- Validation failed (invalid/missing input), or email is already in use.
+	- Example response (validation error):
+
+```json
+{
+	"errors": [
+		{
+			"msg": "Password must be at least 6 characters long"
+		}
+	]
+}
+```
+
+	- Example response (duplicate email):
+
+```json
+{
+	"message": "Email already in use"
+}
+```
+
+- `500 Internal Server Error`
+	- Unexpected server-side failure.
+	- Example response:
+
+```json
+{
+	"message": "Server error"
+}
+```
