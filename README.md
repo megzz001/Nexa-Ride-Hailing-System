@@ -168,3 +168,44 @@ Content-Type: `application/json`
 	"message": "Server error"
 }
 ```
+
+#### Response Examples
+
+Success (201):
+
+```json
+{
+	"message": "User registered successfully",
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+	"user": {
+		"_id": "67f3dcb4c20d2f5b3af00123",
+		"fullname": {
+			"firstName": "John",
+			"lastName": "Doe"
+		},
+		"email": "john.doe@example.com",
+		"role": "rider",
+		"createdAt": "2026-04-08T10:00:00.000Z"
+	}
+}
+```
+
+Validation error (400):
+
+```json
+{
+	"errors": [
+		{
+			"msg": "Password must be at least 6 characters long"
+		}
+	]
+}
+```
+
+Duplicate email (400):
+
+```json
+{
+	"message": "Email already in use"
+}
+```
