@@ -57,3 +57,7 @@ module.exports.loginUser = async (req, res, next) => {
         return res.status(500).json({ message: 'Server error' });
     }
 };
+
+module.exports.getUserProfile = async (req, res, next) => {
+    
+}

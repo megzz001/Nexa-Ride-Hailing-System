@@ -209,3 +209,87 @@ Duplicate email (400):
 	"message": "Email already in use"
 }
 ```
+
+### Login User
+
+- **Endpoint:** `POST /api/users/login`
+- **Description:** Authenticates a user using email and password, then returns a JWT token with user data.
+
+#### Required Request Data
+
+Content-Type: `application/json`
+
+```json
+{
+	"email": "john.doe@example.com",
+	"password": "secret123"
+}
+```
+
+#### Field Requirements
+
+- `email` (string, required, valid email)
+- `password` (string, required, minimum 6 characters)
+
+#### Status Codes
+
+- `200 OK`
+	- Login succeeded.
+
+- `400 Bad Request`
+	- Validation failed for request input.
+
+- `401 Unauthorized`
+	- Invalid email or password.
+
+- `500 Internal Server Error`
+	- Unexpected server-side failure.
+
+#### Response Examples
+
+Success (200):
+
+```json
+{
+	"message": "Login successful",
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+	"user": {
+		"_id": "67f3dcb4c20d2f5b3af00123",
+		"fullname": {
+			"firstName": "John",
+			"lastName": "Doe"
+		},
+		"email": "john.doe@example.com",
+		"role": "rider",
+		"createdAt": "2026-04-08T10:00:00.000Z"
+	}
+}
+```
+
+Validation error (400):
+
+```json
+{
+	"errors": [
+		{
+			"msg": "Please enter a valid email address"
+		}
+	]
+}
+```
+
+Invalid credentials (401):
+
+```json
+{
+	"message": "Invalid email or password"
+}
+```
+
+Server error (500):
+
+```json
+{
+	"message": "Server error"
+}
+```
