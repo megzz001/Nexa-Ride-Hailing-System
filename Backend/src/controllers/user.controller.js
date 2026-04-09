@@ -1,3 +1,4 @@
+const { response } = require('../app');
 const userModel = require('../models/user.model');
 const userService = require('../services/user.service');
 const {validationResult} = require('express-validator');
@@ -50,6 +51,7 @@ module.exports.loginUser = async (req, res, next) => {
 
         const token = user.generateAuthToken();
         user.password = undefined;
+        res.cookie('token', token);
 
         return res.status(200).json({ message: 'Login successful', token, user });
     } catch (error) {
