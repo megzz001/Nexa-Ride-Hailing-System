@@ -12,6 +12,12 @@ module.exports.authUser = async (req, res, next) => {
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
+
+    const isBlackListed = await blacklistToken.findOne({ blacklistedTokens: token });
+    if (isBlackListed) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await userModel.findById(decoded._id);
