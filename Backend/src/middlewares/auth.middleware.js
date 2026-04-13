@@ -1,19 +1,19 @@
 const userModel = require('../models/user.model');
+const blacklistToken = require('../models/blacklistToken.model');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 
 module.exports.authUser = async (req, res, next) => {
     const tokenFromCookie = req.cookies?.token;
     const authHeader = req.headers?.authorization;
-    const tokenFromHeader = authHeader && authHeader.startsWith('Bearer ')
-        ? authHeader.split(' ')[1]
-        : null;
-    const token = tokenFromCookie || tokenFromHeader;
+    const token = req.cookies?.token || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null);
 
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    const isBlackListed = await blacklistToken.findOne({ blacklistedTokens: token });
+    const isBlackListed = await blacklistToken.findOne({ token });
     if (isBlackListed) {
         return res.status(401).json({ message: 'Invalid token' });
     }
