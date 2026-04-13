@@ -293,3 +293,87 @@ Server error (500):
 	"message": "Server error"
 }
 ```
+
+### Get User Profile
+
+- **Endpoint:** `GET /api/users/profile`
+- **Description:** Returns the currently authenticated user's profile.
+
+#### Authentication
+
+This is a protected route. Send JWT using either:
+
+- `Authorization: Bearer <jwt_token>` header
+- `token` cookie
+
+#### Status Codes
+
+- `200 OK`
+	- User profile fetched successfully.
+
+- `401 Unauthorized`
+	- No token provided, token is invalid, or token is blacklisted.
+
+#### Response Examples
+
+Success (200):
+
+```json
+{
+	"user": {
+		"_id": "67f3dcb4c20d2f5b3af00123",
+		"fullname": {
+			"firstName": "John",
+			"lastName": "Doe"
+		},
+		"email": "john.doe@example.com",
+		"role": "rider"
+	}
+}
+```
+
+Unauthorized (401):
+
+```json
+{
+	"message": "Invalid token"
+}
+```
+
+### Logout User
+
+- **Endpoint:** `GET /api/users/logout`
+- **Description:** Logs out the authenticated user by clearing the auth cookie.
+
+#### Authentication
+
+This is a protected route. Send JWT using either:
+
+- `Authorization: Bearer <jwt_token>` header
+- `token` cookie
+
+#### Status Codes
+
+- `200 OK`
+	- Logout completed successfully.
+
+- `401 Unauthorized`
+	- No token provided, token is invalid, or token is blacklisted.
+
+#### Response Examples
+
+Success (200):
+
+```json
+{
+	"message": "Logout successful"
+}
+```
+
+Unauthorized (401):
+
+```json
+{
+	"message": "Invalid token"
+}
+```
