@@ -44,7 +44,7 @@ const captainSchema = new mongoose.Schema({
             minlength: [3, 'Color must be at least 3 character long'],
         },
         plateNumber: {
-            type: Number,
+            type: String,
             required: true,
             minlength: [3, 'Plate number must be at least 3 character long'],
         },
@@ -60,10 +60,10 @@ const captainSchema = new mongoose.Schema({
         },
         location: {
             lat: {
-                type:Number,               
-            }, 
+                type: Number,
+            },
             lng: {
-                type: Number,              
+                type: Number,
             }
         }
     },

@@ -2,27 +2,41 @@ const captainModel = require('../models/captain.model');
 
 
 module.exports.createCaptain = async ({
-    firstname, lastname,email , password, color, vehicleType, plateNumber, capacity
+    fullname, email, password, phone, status, vehicle
 }) => {
     try {
         const existingCaptain = await captainModel.findOne({ email });
         if (existingCaptain) {
             throw new Error('Captain with this email already exists');
         }
-        if(!firstname || !lastname || !email || !password || !color || !vehicleType || !plateNumber || !capacity){
+        if (
+            !fullname?.firstName ||
+            !fullname?.lastName ||
+            !email ||
+            !password ||
+            !phone ||
+            !vehicle?.color ||
+            !vehicle?.vehicleType ||
+            !vehicle?.plateNumber ||
+            !vehicle?.capacity
+        ) {
             throw new Error('All fields are required');
         }
         const captain = await captainModel.create({
             fullname:{
-                firstname,
-                lastname
+                firstName: fullname.firstName,
+                lastName: fullname.lastName
             },
             email,
             password,
-            color,
-            vehicleType,
-            plateNumber,
-            capacity
+            phone,
+            status,
+            vehicle: {
+                color: vehicle.color,
+                vehicleType: vehicle.vehicleType,
+                plateNumber: vehicle.plateNumber,
+                capacity: vehicle.capacity
+            }
         });
         return captain;
     }
