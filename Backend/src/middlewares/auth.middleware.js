@@ -2,7 +2,6 @@ const userModel = require('../models/user.model');
 const captainModel = require('../models/captain.model');
 const blacklistToken = require('../models/blacklistToken.model');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
 
 module.exports.authUser = async (req, res, next) => {

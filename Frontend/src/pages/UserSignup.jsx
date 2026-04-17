@@ -10,7 +10,9 @@ const UserSignup = () => {
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [role, setRole] = useState('rider')
   const [userData, setUserData] = useState({})
+  const [error, setError] = useState('')
 
   const navigate = useNavigate()
 
@@ -23,29 +25,36 @@ const UserSignup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
-    const newUser = {
-      fullname: {
-        firstname: firstName,
-        lastname: lastName
-      },
-      email: email,
-      password: password
+    setError('')
+
+    try {
+      const newUser = {
+        fullname: {
+          firstName: firstName,
+          lastName: lastName
+        },
+        email: email,
+        password: password,
+        role: role
+      }
+
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
+
+      if (response.status === 201) {
+        const data = response.data
+        setUser(data.user)
+        localStorage.setItem('token', data.token)
+        setEmail('')
+        setFirstName('')
+        setLastName('')
+        setPassword('')
+        setRole('rider')
+        navigate('/home')
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || 'Signup failed'
+      setError(message)
     }
-
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
-
-    if (response.status === 201) {
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token', data.token)
-      navigate('/home')
-    }
-
-
-    setEmail('')
-    setFirstName('')
-    setLastName('')
-    setPassword('')
 
   }
   return (
@@ -60,32 +69,11 @@ const UserSignup = () => {
 
             <h3 className='text-lg w-1/2  font-medium mb-2'>What's your name</h3>
             <div className='flex gap-4 mb-7'>
-              <input
-                required
-                className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border  text-lg placeholder:text-base'
-                type="text"
-                placeholder='First name'
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value)
-                }}
-              />
-              <input
-                required
-                className='bg-[#eeeeee] w-1/2  rounded-lg px-4 py-2 border  text-lg placeholder:text-base'
-                type="text"
-                placeholder='Last name'
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value)
-                }}
-              />
+              <input required className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border  text-lg placeholder:text-base' type="text" placeholder='First name' value={firstName} onChange={(e) => { setFirstName(e.target.value) }} />
+              <input required className='bg-[#eeeeee] w-1/2  rounded-lg px-4 py-2 border  text-lg placeholder:text-base' type="text" placeholder='Last name' value={lastName} onChange={(e) => { setLastName(e.target.value) }} />
             </div>
-
             <h3 className='text-lg font-medium mb-2'>What's your email</h3>
-            <input
-              required
-              value={email}
+            <input required value={email}
               onChange={(e) => {
                 setEmail(e.target.value)
               }}
@@ -106,9 +94,19 @@ const UserSignup = () => {
               placeholder='password'
             />
 
+            <h3 className='text-lg font-medium mb-2'>Sign up as</h3>
+            <select value={role} onChange={(e) => setRole(e.target.value)} className='bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg'>
+              <option value='rider'>Rider</option>
+              <option value='driver'>Driver</option>
+            </select>
+
             <button
               className='bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
             >Create account</button>
+
+            {error && (
+              <p className='text-red-600 text-sm mb-3'>{error}</p>
+            )}
 
           </form>
           <p className='text-center'>Already have a account? <Link to='/login' className='text-blue-600'>Login here</Link></p>

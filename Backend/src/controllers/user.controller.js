@@ -1,4 +1,3 @@
-const { response } = require('../app');
 const userModel = require('../models/user.model');
 const userService = require('../services/user.service');
 const {validationResult} = require('express-validator');
@@ -10,19 +9,23 @@ module.exports.registerUser = async (req, res,next) => {
     }
     try {
         const {fullname, email, password, role} = req.body;
+        const normalizedFullname = {
+            firstName: fullname?.firstName || fullname?.firstname,
+            lastName: fullname?.lastName || fullname?.lastname
+        };
         const existingUser = await userModel.findOne({email});
         if (existingUser) {
             return res.status(400).json({message: 'Email already in use'});
         }
         const hashedPassword = await userModel.hashPassword(password);
         const user = await userService.createUser({
-            fullname,  
+            fullname: normalizedFullname,
             email,
             password: hashedPassword,
             role   
         });
-        await user.save();
         const token = user.generateAuthToken();
+        user.password = undefined;
         res.status(201).json({message: 'User registered successfully', token , user});
     } catch (error) {
         console.error('Error registering user:', error);
